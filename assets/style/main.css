@@ -1,11 +1,12 @@
 /* Setup */
 @import url('https://fonts.googleapis.com/css2?family=Edu+VIC+WA+NT+Beginner&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
+@import url('./base/basic.css');
 
 /* Vars */
 :root {
-	--clr1: rgb(96, 107, 91);
-	--clr2: rgb(120, 99, 110);
+	--clr1: rgb(163, 191, 208);
+	--clr2: rgb(209, 178, 225);
 
 	--clr1bg: rgb(153, 166, 149);
 	--clr1bg-light: rgb(205, 221, 200);
