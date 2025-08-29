@@ -1,28 +1,42 @@
 const { useEffect, useState } = React;
-import BookList from "../cmps/BookList.jsx";
+import {BooksList} from "../cmps/BooksList.jsx";
+import {BooksFilter} from "../cmps/BooksFilter.jsx";
+import { bookService } from "../services/book.service.js";
 
 
 export function BookIndex() {
-  const [books,setBook] = useState([]);
-  const [filterBy,setFilterBy] = useState(null);
+  const [books,setBooks] = useState([]);
+  const [filterBy,setFilterBy] = useState({});
+
+
 
     useEffect(()=>{
-      loadBooks(filterBy);
-    },[])
+      loadBooks(filterBy)
+    },[filterBy])
 
-    function loadBooks(filterParams){
-      // bookService
+    async function loadBooks(filterParams){
+      try{
+        const books = await bookService.query(filterParams)
+        setBooks(books)
+      }
+      catch(err){
+        console.log("Error query books :",err );
+      }}
+
+    function handleEnteredFilter(filerParams){
+      setFilterBy(filerParams)
     }
   
     if(!books || books.length === 0) return <div>Loading....</div>
     return (
     <section>
       <div>
-        {/* BookFilter */}
+        <BooksFilter
+        handleEnteredFilter = {handleEnteredFilter}
+        />
       </div>
       <div>
-        {/* BookList */}
-        <BookList 
+        <BooksList 
         books = {books}
         />
       </div>

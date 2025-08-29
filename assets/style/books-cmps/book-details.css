@@ -1,0 +1,30 @@
+/*  */
+.red{
+    color:red;
+}
+.green{
+    color: green;
+}
+/*  */
+.book-details-container{
+    position: fixed;
+    display: flex;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    z-index: 10;
+    max-height: 85vh;
+    overflow: scroll;
+    text-align: center;
+    background-color: #b7b7b7;
+    border-radius: 2em ;
+}
+
+
+.x-button{
+    position: fixed;
+    z-index: 11;
+    top: 5vh;
+    right: 24vw;
+    border-radius: 50%;
+}

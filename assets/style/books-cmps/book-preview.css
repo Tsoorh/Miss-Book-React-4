@@ -1,0 +1,19 @@
+
+
+.books-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2em;
+    margin-top: 1em;
+}
+
+.book-preview-container{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 1em;
+    border: 0.3em solid rgb(217, 233, 228);
+    width: 20em;
+}

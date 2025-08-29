@@ -8,7 +8,7 @@ export function LongTxt({txt}){
     useEffect(()=>{
         if(txt.length>100){
             setIsLong (true)
-            setTxtToShow(txt.substring+'...')
+            setTxtToShow(txt.substring(0,99)+'...')
         } else{
             setReadMore(true);
         }
@@ -18,7 +18,7 @@ export function LongTxt({txt}){
         setReadMore(prev=>!prev);
     }
     
-    const btnTxt = readMore ? "Read more" : "Read less";
+    const btnTxt = readMore ? "Read less" : "Read more";
     const paraTxt = readMore ? txt : txtToShow;
     return(
         <div>
