@@ -9,11 +9,11 @@ export function BookPreview({ book }) {
 
 
   const { title, listPrice, language } = book;
-  const { amount, currency, isOnSale } = listPrice;
+  const { amount, currencyCode, isOnSale } = listPrice;
+  
 
   function onOpenDetails(ev) {
     const {id} = ev.target;
-    // setIsDetailsOpen((prev) => !prev);
     navigate(`/books/${id}`)
   }
 
@@ -24,7 +24,7 @@ export function BookPreview({ book }) {
         <h1>{title}</h1>
         <p>Language: {language}</p>
         <p>
-          Price: {amount} {currency}
+          Price: {amount} {currencyCode}
         </p>
         <p>{availability}</p>
 
