@@ -1,18 +1,31 @@
 import { LongTxt } from "./LongTxt.jsx";
 import { bookService } from "../services/book.service.js";
 
-const {useState} = React;
-const {Link,useParams} = ReactRouterDOM;
+
+const {useState,useEffect} = React;
+const {Link,useParams,useNavigate} = ReactRouterDOM;
 
 export function BookDetails() {
-  const [book,setBook] = useState({})
-  const params = useParams()
+  const [book,setBook] = useState(null)
+  const [isOnSaleReady,setIsOnSaleReady] = useState(false);
+  const [isImgReady,setIsImgReady] = useState(false);
+  const params = useParams();
   const {bookId} = params;
-  
+  const navigate =useNavigate();
+    
+  useEffect(()=>{
+    const getBook = async () => {
+      try{
+        const bookData = await bookService.get(bookId);
+        setBook(bookData)        
+      }catch(err){
+        console.log("error getting book with bookService.get",err)
+        navigate('/books')
+      }
+    }
+    getBook();
+  },[bookId])
 
-  useState(()=>{
-    bookService.get(bookId).then(setBook).catch(err=>{console.log("error getting book with Get",err)});
-  })
   
 
   function pageCountHandle(pages) {
@@ -31,7 +44,16 @@ export function BookDetails() {
     if (amount < 20) return "green";
     return "";
   }
-  const {
+
+  function onHandleLoadingOnSale(){
+    setIsOnSaleReady(true)
+  }
+  function onHandleLoadingBookIMG(){
+    setIsImgReady(true)
+  }
+
+  if(book){
+    var {
     id,
     title,
     subtitle,
@@ -43,16 +65,18 @@ export function BookDetails() {
     thumbnail,
     language,
     listPrice,
-  } = book;
-  console.log(listPrice); 
-  const { amount, currencyCode, isOnSale } = listPrice;
+    prevBookId,
+    nextBookId
+  } = book;}
+  
+  if (listPrice) { var { amount, currencyCode, isOnSale } = listPrice };
 
-
+  
   const age = handlePublishedDate(publishedDate);
   const readingLvl = pageCountHandle(pageCount);
   const availability = isOnSale ? "In Stock" : "Sold Out";
   const amountClass = checkAmount(amount);
-  if (!book) return <div>Loading book.....</div>
+  if (!book) return <div className="loading">Loading book.....</div>
   return (
     <div>
       <div className="book-details-container">
@@ -76,14 +100,25 @@ export function BookDetails() {
               return <span key={category}>{category}</span>;
             })}
           </p>
-          <img src={thumbnail} alt={thumbnail} />
+          {(!isImgReady)&&<p>Loading book picture....</p>}
+          <img onLoad={onHandleLoadingBookIMG} src={thumbnail} alt={thumbnail} />
           <p>{availability}</p>
+          
           {isOnSale && (
+            <div>
+            {(!isOnSaleReady)&&<p>Loading sale-icon...</p>}
             <img
+              onLoad={onHandleLoadingOnSale}
               src="https://img.icons8.com/?size=100&id=8299&format=png&color=000000"
               alt="onSaleSign"
-            />
+              />
+            </div>
           )}
+          
+          <div>
+          <button><Link to={`/books/${prevBookId}`}>Prev book</Link></button>
+          <button><Link to={`/books/${nextBookId}`}>Next book</Link></button>
+          </div>
           <button><Link to="/books">Back</Link></button>
         </div>
       </div>

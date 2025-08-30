@@ -35,7 +35,7 @@ function query(filterBy = {}) {
 }
 
 function get(bookId) {
-    return storageService.get(BOOK_KEY, bookId)
+    return storageService.get(BOOK_KEY, bookId).then(_setNextPrevBookId)
 }
 
 function remove(bookId) {
@@ -127,3 +127,15 @@ async function getPriceRange(){
         console.log("Error getting range : ",err);
     } 
 }
+
+
+ function _setNextPrevBookId(book) {
+ return storageService.query(BOOK_KEY).then((books) => {
+ const bookIdx = books.findIndex((currbook) => currbook.id === book.id)
+ const nextBook = books[bookIdx + 1] ? books[bookIdx + 1] : books[0]
+ const prevBook = books[bookIdx- 1] ? books[bookIdx- 1] : books[books.length-1]
+ book.nextBookId = nextBook.id
+ book.prevBookId = prevBook.id
+ return book
+ })
+ }

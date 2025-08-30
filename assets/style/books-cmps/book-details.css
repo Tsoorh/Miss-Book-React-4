@@ -7,19 +7,20 @@
 }
 /*  */
 .book-details-container{
-    position: fixed;
     display: flex;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%,-50%);
-    z-index: 10;
-    max-height: 85vh;
-    overflow: scroll;
+    flex-direction: column;
+    justify-content: center;
+    margin: auto;
+    background-color: #f3eded53;
+    max-width: 40em;
     text-align: center;
-    background-color: #b7b7b7;
-    border-radius: 2em ;
 }
 
+.loading{
+    text-align: center;
+    margin: auto;
+    justify-content: center;
+}
 
 .x-button{
     position: fixed;
