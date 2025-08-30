@@ -27,7 +27,6 @@ export function BookIndex() {
       setFilterBy(filerParams)
     }
   
-    if(!books || books.length === 0) return <div>Loading....</div>
     return (
     <section>
       <div>
@@ -35,6 +34,7 @@ export function BookIndex() {
         handleEnteredFilter = {handleEnteredFilter}
         />
       </div>
+      {(books.length===0)&& <p className="no-books-p">No book were found</p> }
       <div>
         <BooksList 
         books = {books}

@@ -10,7 +10,9 @@ export const bookService = {
     save,
     getEmptyBook,
     getDefaultFilter,
-    get
+    get,
+    getPriceRange,
+    getCategories
 }
 
 // For Debug (easy access from console):
@@ -26,10 +28,24 @@ function query(filterBy = {}) {
             }
             if (filterBy.title) {
                 const regExp = new RegExp(filterBy.title, 'i')
-                books = books.filter(book => regExp.test(book.vendor))
+                books = books.filter(book => regExp.test(book.title))
             }
-            if (filterBy.maxSpeed) {
-                books = books.filter(book => book.priceList.amount <= filterBy.maxSpeed)
+            if (filterBy.maxPrice) {
+                books = books.filter(book => book.listPrice.amount <= filterBy.maxPrice)
+            }
+            if (filterBy.isOnSale!=="all") {
+                switch (filterBy.isOnSale){
+                    case "in-stock":
+                    books=books.filter(book => (book.listPrice.isOnSale))
+                    break;
+                    case "sold-out":
+                    books=books.filter(book => (!book.listPrice.isOnSale))
+                    break;
+                }
+            }
+            if(filterBy.category!=="All"){ 
+                const regExp = new RegExp(filterBy.category, 'i')
+                books = books.filter(book => regExp.test(book.categories))
             }
             return books
         })
@@ -51,14 +67,14 @@ function save(book) {
     }
 }
 
-function getEmptyBook(title = '', maxSpeed = '') {
-    return { title, maxSpeed }
+function getEmptyBook(title = '', maxPrice = '') {
+    return { title, maxPrice }
 }
 
 async function getDefaultFilter() {
     try{
         const range =await getPriceRange()
-        const filterBy = {title:'',maxSpeed:range.max, isOnSale: "all"}           
+        const filterBy = {title:'',maxPrice:range.max, isOnSale: "all"}           
         return filterBy
     }
     catch(err){
@@ -127,6 +143,23 @@ async function getPriceRange(){
     }catch(err){
         console.log("Error getting range : ",err);
     } 
+}
+async function getCategories(){
+    try{
+        const books = await query();
+        const categoriesList = [];
+        books.map(book=>{
+            book.categories.map(category=>{
+                if(!categoriesList.some(listItem=>listItem===category)){
+                    categoriesList.push(category);
+                }
+            })
+        })        
+        return categoriesList;
+    }catch (err){
+        return console.log("error trying to get categories",err);    
+    }
+    
 }
 
 

@@ -1,0 +1,35 @@
+.book-filter-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    padding: 1em;
+    border-bottom: 0.02em black solid;
+    align-items: center;
+}
+
+.book-filter-container>form>input[type="text"]{
+    border-radius: 0.5em;
+    border: none;
+    background-color: #f3e7e7;
+    padding: 0.5em;
+}
+
+.book-filter-container>form>input[type="radio"]{
+    margin-left: 2em;
+}
+
+.book-filter-container>form>select{
+    padding: 0.5em;
+    border: none;
+    background-color: #f3e7e7;
+    border-radius: 0.5em;
+}
+
+.no-books-p{
+    text-align: center;
+    margin-top: 4em;
+    font-weight: 800;
+}
+
+

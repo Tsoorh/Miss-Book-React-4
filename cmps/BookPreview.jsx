@@ -4,7 +4,6 @@ const { Fragment } = React;
 const {useNavigate} = ReactRouterDOM;
 
 export function BookPreview({ book }) {
-  // const [isDetailOpen, setIsDetailsOpen] = useState(false);
   const navigate = useNavigate();
 
 
@@ -31,7 +30,6 @@ export function BookPreview({ book }) {
         <button onClick={onOpenDetails} id={book.id}>Details</button>
       </div>
       <div className="book-details">
-      {/* {isDetailOpen && <BookDetails book={book} toggleModal={onToggleModal}/>} */}
       </div>
     </Fragment>
   );
