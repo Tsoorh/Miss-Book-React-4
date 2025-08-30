@@ -20,8 +20,9 @@ function query(filterBy = {}) {
     return storageService.query(BOOK_KEY)
         .then(
             books => {
-            if (!books){
+            if (!books||books.length===0){
                 _createBooks();
+                books = utilService.loadFromStorage(BOOK_KEY)
             }
             if (filterBy.title) {
                 const regExp = new RegExp(filterBy.title, 'i')
