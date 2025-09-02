@@ -1,0 +1,29 @@
+.book-edit{
+    display: flex;
+    /* justify-cosntent: center; */
+    width: 100%;
+}
+
+.book-edit>button{
+    position: relative;
+    left: 50%; 
+    transform: translate(-50%);
+    width: 10em;
+}
+.add-book-form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2em;
+    position: relative;
+    margin-top: 5em;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+.add-book-form>div>input {
+    padding: 0.5em;
+    border-radius: 0.5em;
+    border: none;
+    background-color: #ede2e2;
+}

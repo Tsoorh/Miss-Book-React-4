@@ -73,8 +73,7 @@ function getEmptyBook(title = '', maxPrice = '') {
 
 async function getDefaultFilter() {
     try{
-        const range =await getPriceRange()
-        const filterBy = {title:'',maxPrice:range.max, isOnSale: "all"}           
+        const filterBy = {title:'',maxPrice:1000, isOnSale: "all",categories:"All"}           
         return filterBy
     }
     catch(err){
@@ -129,6 +128,30 @@ function _createBook(title, price = 0) {
     book.id = utilService.makeId()
     return book
 }
+
+async function createBookMissingParts(book){
+    const ctgs = ['Love', 'Fiction', 'Poetry', 'Computers', 'Religion']
+    let newBook = {
+        ...book,
+        id : utilService.makeId(),
+        subtitle: utilService.makeLorem(4),
+        authors: [utilService.makeLorem(1)],
+        publishedDate: utilService.getRandomIntInclusive(1950, 2024),
+        description: utilService.makeLorem(20),
+        pageCount: utilService.getRandomIntInclusive(20, 600),
+        categories: [ctgs[utilService.getRandomIntInclusive(0, ctgs.length-1)]],
+        thumbnail: `http://www.coding-academy.org/books-photos/${(Math.floor(Math.random*100))}.jpg`,
+        language: "en",
+        listPrice:{
+            amount: utilService.getRandomIntInclusive(80, 500),
+            currencyCode: "EUR",
+            isOnSale: Math.random() > 0.7
+    }
+}
+    return newBook;
+}
+
+
 
 async function getPriceRange(){
     try{
