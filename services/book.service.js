@@ -10,9 +10,7 @@ export const bookService = {
     save,
     getEmptyBook,
     getDefaultFilter,
-    get,
-    getPriceRange,
-    getCategories
+    get
 }
 
 // For Debug (easy access from console):
@@ -70,29 +68,10 @@ function save(book) {
 function getEmptyBook(title = '', maxPrice = '') {
     return { title, maxPrice }
 }
-
-async function getDefaultFilter() {
-    try{
-        const filterBy = {title:'',maxPrice:1000, isOnSale: "all",categories:"All"}           
+function getDefaultFilter() {
+        const filterBy = {title:'',maxPrice:1000, isOnSale: "all",category:"All"}           
         return filterBy
-    }
-    catch(err){
-        return console.log("error in function getDefaultFilter : ",err);
-    }    
 }
-
-// function _createBooks() {
-//     let books = utilService.loadFromStorage(BOOK_KEY)
-//     if (!books || !books.length) {
-//         books = []
-//         const vendors = ['audu', 'fiak', 'subali', 'mitsu']
-//         for (let i = 0; i < 6; i++) {
-//             const vendor = vendors[utilService.getRandomIntInclusive(0, vendors.length - 1)]
-//             books.push(_createBook(vendor, utilService.getRandomIntInclusive(80, 300)))
-//         }
-//         utilService.saveToStorage(BOOK_KEY, books)
-//     }
-// }
 
 function _createBooks() {
   const ctgs = ['Love', 'Fiction', 'Poetry', 'Computers', 'Religion']
@@ -149,40 +128,6 @@ async function createBookMissingParts(book){
     }
 }
     return newBook;
-}
-
-
-
-async function getPriceRange(){
-    try{
-        const books =await query()
-        books[0].listPrice.amount
-        const range = {min:books[0].listPrice.amount,max:books[0].listPrice.amount}
-        books.map(book=>{
-            if (book.listPrice.amount > range.max) range.max = book.listPrice.amount
-            if (book.listPrice.amount < range.min) range.min = book.listPrice.amount
-        })
-        return range;
-    }catch(err){
-        console.log("Error getting range : ",err);
-    } 
-}
-async function getCategories(){
-    try{
-        const books = await query();
-        const categoriesList = [];
-        books.map(book=>{
-            book.categories.map(category=>{
-                if(!categoriesList.some(listItem=>listItem===category)){
-                    categoriesList.push(category);
-                }
-            })
-        })        
-        return categoriesList;
-    }catch (err){
-        return console.log("error trying to get categories",err);    
-    }
-    
 }
 
 

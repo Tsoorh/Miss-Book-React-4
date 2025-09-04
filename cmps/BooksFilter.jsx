@@ -1,51 +1,35 @@
 const {useState,useEffect} = React
-import { bookService } from "../services/book.service.js"
 
 
-export function BooksFilter({handleEnteredFilter}){
-const [filterBookBy,SetFilterBookBy] = useState({title:'',maxPrice:'',isOnSale:'All',category:'All'})
-const [categories,setCategories] = useState(["All"])
-const [range,setRange]=useState({})
+export function BooksFilter({onSetFilterBy,filterBy,data}){    
+const [filterByToEdit,setFilterByToEdit] = useState({...filterBy})
+const [categoriesAndRange,setCategoriesAndRange] = useState({...data});
+
 
 useEffect(()=>{
-    const getRange = async()=>{
-        try
-        {
-        const priceRange = await bookService.getPriceRange()
-        const categories = await bookService.getCategories()
-        setCategories(prev=>([...prev,...categories]))
-        setRange(priceRange)
-        SetFilterBookBy(prev=>({
-            ...prev,maxPrice:priceRange.max
-        }))
-        }catch(err){
-            console.log("Error trying to get Range for bookFilter",err);
-        }
-    }
-    getRange();
-},[])
+    setCategoriesAndRange({...data})
+    setFilterByToEdit(prev=>({...prev,maxPrice:data.max}))
+},[data])
 
 useEffect(()=>{
-    handleEnteredFilter(filterBookBy);
-},[filterBookBy])
+    onSetFilterBy({...filterByToEdit});
+},[filterByToEdit])
 
 function onHandleInput(ev){
     ev.preventDefault();
-    const{name,value} = ev.target;
-    console.log("name: ",name,"---- value: ",value);
-    SetFilterBookBy(prev=>({
+    const{name,value} = ev.target;    
+    setFilterByToEdit(prev=>({
         ...prev,[name]:value
-    }))
+    }))    
 }
-
 
 return(
     <div className="book-filter-container">
         {/* price */}
             <form>
                 <label htmlFor="maxPrice">Price </label>
-                <input type="range" max={range.max} min={range.min} id="maxPrice" name="maxPrice" value={filterBookBy.maxPrice} onInput={onHandleInput}/>
-                <label htmlFor="maxPrice"> {filterBookBy.maxPrice}</label>
+                <input type="range" max={categoriesAndRange.max} min={categoriesAndRange.min} id="maxPrice" name="maxPrice" value={filterByToEdit.maxPrice} onInput={onHandleInput}/>
+                <label htmlFor="maxPrice"> {filterByToEdit.maxPrice}</label>
             </form>
         
         {/* title */}
@@ -66,13 +50,12 @@ return(
         <form>
             <label htmlFor="category">Category: </label>
             <select name="category" id="category" onInput={onHandleInput}>
-                {categories.map((category,idx)=>{
-                    return <option key={idx+category} name="category" value={category} >{category}</option>
+                {categoriesAndRange.categories.map((category,idx)=>{
+                    return <option key={idx+category} name="category" value={category} onInput={onHandleInput}>{category}</option>
                 })}
             </select>
         </form>
         
     </div>
 )
-
 }
