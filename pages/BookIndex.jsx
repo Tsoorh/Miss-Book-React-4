@@ -22,7 +22,7 @@ export function BookIndex() {
       const books = await bookService.query(filterParams);
       setBooks(books);
       if(!rangeAndCategories || rangeAndCategories.categories.length===1){
-        setRangeAndCategories(getPriceRangeAndCategories());
+      setRangeAndCategories(getPriceRangeAndCategories());
       }
     } catch (err) {
       console.log("Error query books :", err);
@@ -30,10 +30,15 @@ export function BookIndex() {
   }
 
   function onSetFilterBy(filterParams) {    
-    console.log(filterParams);
-    
     setFilterBy(filterParams);
     loadBooks(filterParams);
+  }
+
+  async function onHandleDeleteBook(bookId){
+    await bookService.remove(bookId);
+    const newBooksArray = books.filter(book => book.id !== bookId)
+    setBooks(newBooksArray);
+    loadBooks(bookService.getDefaultFilter());
   }
 
   function onHandleNewBook() {
@@ -46,7 +51,7 @@ export function BookIndex() {
     const data = {
       min: books[0].listPrice.amount,
       max: books[0].listPrice.amount,
-      categories,
+      categories
     };
     books.forEach((book) => {
       if (book.listPrice.amount > data.max) data.max = book.listPrice.amount;
@@ -74,7 +79,7 @@ export function BookIndex() {
       </div>
       {books.length === 0 && <p className="no-books-p">No books were found</p>}
       <div>
-        <BooksList books={books} />
+        <BooksList books={books} onHandleDeleteBook={onHandleDeleteBook}/>
       </div>
     </section>
   );

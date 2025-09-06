@@ -41,7 +41,7 @@ function query(filterBy = {}) {
                     break;
                 }
             }
-            if(filterBy.category!=="All"){ 
+            if(filterBy.category!=="all"){ 
                 const regExp = new RegExp(filterBy.category, 'i')
                 books = books.filter(book => regExp.test(book.categories))
             }
@@ -57,11 +57,12 @@ function remove(bookId) {
     return storageService.remove(BOOK_KEY, bookId)
 }
 
-function save(book) {
+async function save(book) {
     if (book.id) {
         return storageService.put(BOOK_KEY, book)
     } else {
-        return storageService.post(BOOK_KEY, book)
+        const newBookToPost = await createBookMissingParts(book);
+        return storageService.post(BOOK_KEY, newBookToPost)
     }
 }
 
@@ -69,7 +70,7 @@ function getEmptyBook(title = '', maxPrice = '') {
     return { title, maxPrice }
 }
 function getDefaultFilter() {
-        const filterBy = {title:'',maxPrice:1000, isOnSale: "all",category:"All"}           
+        const filterBy = {title:'',maxPrice:1000, isOnSale: "all",category:"all"}           
         return filterBy
 }
 
@@ -108,8 +109,9 @@ function _createBook(title, price = 0) {
     return book
 }
 
-async function createBookMissingParts(book){
+function createBookMissingParts(book){
     const ctgs = ['Love', 'Fiction', 'Poetry', 'Computers', 'Religion']
+    console.log("book",book);
     let newBook = {
         ...book,
         id : utilService.makeId(),
@@ -119,14 +121,15 @@ async function createBookMissingParts(book){
         description: utilService.makeLorem(20),
         pageCount: utilService.getRandomIntInclusive(20, 600),
         categories: [ctgs[utilService.getRandomIntInclusive(0, ctgs.length-1)]],
-        thumbnail: `http://www.coding-academy.org/books-photos/${(Math.floor(Math.random*100))}.jpg`,
+        thumbnail: `http://www.coding-academy.org/books-photos/${(Math.floor(Math.random()*21))}.jpg`,
         language: "en",
         listPrice:{
-            amount: utilService.getRandomIntInclusive(80, 500),
+            ...book.listPrice,
             currencyCode: "EUR",
             isOnSale: Math.random() > 0.7
-    }
+    }    
 }
+    console.log("newBook",newBook);
     return newBook;
 }
 

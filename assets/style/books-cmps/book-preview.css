@@ -1,6 +1,4 @@
-
-
-.books-container{
+.books-container {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -9,11 +7,17 @@
     margin-top: 1em;
 }
 
-.book-preview-container{
+.book-preview-container {
     display: flex;
     flex-direction: column;
     text-align: center;
     gap: 1em;
     border: 0.3em solid rgb(217, 233, 228);
     width: 20em;
+}
+
+.preview-img {
+    height: auto;
+    max-width: 8em;
+    margin: auto;
 }

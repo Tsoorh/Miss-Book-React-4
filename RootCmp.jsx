@@ -24,6 +24,7 @@ export function RootCmp() {
                 <Route path="/books" element={<BookIndex/>}/>
                 <Route path="/books/:bookId" element={<BookDetails/>}/>
                 <Route path="/books/addnewbook" element={<BookEdit/>}/>
+                <Route path="/books/addnewbook/:bookId" element={<BookEdit/>}/>
                 <Route path="*" element={<ErrorPage/>} />
                 </Routes>
             </main>

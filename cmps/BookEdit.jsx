@@ -1,21 +1,21 @@
-import { bookService } from "../services/book.service.js";
-
+import {bookService} from "../services/book.service.js";
 const { useState, useEffect } = React;
-const { useNavigate, Link } = ReactRouterDOM;
+const { useNavigate, Link, useParams } = ReactRouterDOM;
 
-export function BookEdit({ bookId }) {
+export function BookEdit() {
   const [book, setBook] = useState({ title: "", listPrice: { amount: '' } });
   const navigate = useNavigate();
+  const params = useParams();
 
   useEffect(() => {
-    if (bookId) {
+    if (params.bookId) {
       const getBook = async () => {
-        const chosenBook = await bookService.get(bookId);
+        const chosenBook = await bookService.get(params.bookId);
         setBook(chosenBook);
       };
       getBook();
     }
-  }, [bookId]);
+  }, [params.bookId]);
 
   function onHandleInput(event) {
     event.preventDefault();
@@ -35,11 +35,10 @@ export function BookEdit({ bookId }) {
     }
   }
 
-  function onSaveBook(ev) {
+  async function onSaveBook(ev) {
     ev.preventDefault()
     if (book.listPrice.amount && book.title) {
-      const fullDetailsBook = bookService.createBookMissingParts();
-      bookService.save(fullDetailsBook);
+      await bookService.save(book);
       setBook({});
       navigate("/books");
     } else {
@@ -57,8 +56,8 @@ export function BookEdit({ bookId }) {
             type="text"
             id="title"
             name="title"
-            value={book.title}
-            onInput={onHandleInput}
+            value={book.title || ''}
+            onChange={onHandleInput}
           />
         </div>
 
@@ -69,8 +68,8 @@ export function BookEdit({ bookId }) {
             id="listprice"
             data-parent="listPrice"
             name="amount"
-            value={book.listPrice.amount || ""}
-            onInput={onHandleInput}
+            value={book.listPrice.amount || ''}
+            onChange={onHandleInput}
           />
         </div>
 
