@@ -1,21 +1,25 @@
-import {bookService} from "../services/book.service.js";
+import { bookService } from "../services/book.service.js";
+import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js";
 const { useState, useEffect } = React;
 const { useNavigate, Link, useParams } = ReactRouterDOM;
 
 export function BookEdit() {
-  const [book, setBook] = useState({ title: "", listPrice: { amount: '' } });
+  const [book, setBook] = useState({ title: "", listPrice: { amount: "" } });
   const navigate = useNavigate();
-  const params = useParams();
+  const { bookId } = useParams();
 
   useEffect(() => {
-    if (params.bookId) {
-      const getBook = async () => {
-        const chosenBook = await bookService.get(params.bookId);
-        setBook(chosenBook);
-      };
-      getBook();
+    if (bookId) loadBook();
+  }, [bookId]);
+
+  async function loadBook() {
+    try {
+      const chosenBook = await bookService.get(bookId);
+      setBook(chosenBook);
+    } catch (err) {
+      console.log("error trying to load book in Book Edit: ", err);
     }
-  }, [params.bookId]);
+  }
 
   function onHandleInput(event) {
     event.preventDefault();
@@ -36,27 +40,34 @@ export function BookEdit() {
   }
 
   async function onSaveBook(ev) {
-    ev.preventDefault()
+    ev.preventDefault();
     if (book.listPrice.amount && book.title) {
-      await bookService.save(book);
-      setBook({});
-      navigate("/books");
+      try {
+        await bookService.save(book);
+        showSuccessMsg("book saved successfully");
+        setBook({});
+        navigate("/books");
+      } catch (err) {
+        console.log("🚀 ~ onSaveBook ~ err:", err);
+        showErrorMsg("Error saving book");
+      }
     } else {
-      console.log("Error trying to save new book");
+      showErrorMsg("Fields must be full;");
     }
   }
 
   return (
     <div>
       <form className="add-book-form">
-        <h1>Add new book</h1>
+        <h1>{bookId ? "Edit" : "Add"} book</h1>
         <div>
           <label htmlFor="title">Title </label>
           <input
+            className="input-style"
             type="text"
             id="title"
             name="title"
-            value={book.title || ''}
+            value={book.title || ""}
             onChange={onHandleInput}
           />
         </div>
@@ -64,11 +75,12 @@ export function BookEdit() {
         <div>
           <label htmlFor="listprice">Price </label>
           <input
+            className="input-style"
             type="number"
             id="listprice"
             data-parent="listPrice"
             name="amount"
-            value={book.listPrice.amount || ''}
+            value={book.listPrice.amount || ""}
             onChange={onHandleInput}
           />
         </div>

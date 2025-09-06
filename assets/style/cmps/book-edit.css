@@ -20,10 +20,3 @@
     left: 50%;
     transform: translate(-50%);
 }
-
-.add-book-form>div>input {
-    padding: 0.5em;
-    border-radius: 0.5em;
-    border: none;
-    background-color: #ede2e2;
-}

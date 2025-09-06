@@ -51,6 +51,9 @@ export function BookDetails() {
   function onHandleLoadingBookIMG(){
     setIsImgReady(true)
   }
+  function onAddReview(){
+    navigate(`/books/addreview/${bookId}`)
+  }
 
   if(book){
     var {
@@ -114,7 +117,7 @@ export function BookDetails() {
               />
             </div>
           )}
-          
+          <button onClick={onAddReview}>Add review</button>
           <div>
           <button><Link to={`/books/${prevBookId}`}>Prev book</Link></button>
           <button><Link to={`/books/${nextBookId}`}>Next book</Link></button>

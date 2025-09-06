@@ -2,6 +2,7 @@ const { useEffect, useState } = React;
 import { BooksList } from "../cmps/BooksList.jsx";
 import { BooksFilter } from "../cmps/BooksFilter.jsx";
 import { bookService } from "../services/book.service.js";
+import { showSuccessMsg,showErrorMsg } from "../services/event-bus.service.js";
 const { useNavigate } = ReactRouterDOM;
 
 export function BookIndex() {
@@ -9,7 +10,7 @@ export function BookIndex() {
   const [filterBy, setFilterBy] = useState(bookService.getDefaultFilter());
   const [rangeAndCategories, setRangeAndCategories] = useState(
     getPriceRangeAndCategories()
-  );
+  );//לנסות לשנות לuseref
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,10 +36,15 @@ export function BookIndex() {
   }
 
   async function onHandleDeleteBook(bookId){
-    await bookService.remove(bookId);
-    const newBooksArray = books.filter(book => book.id !== bookId)
-    setBooks(newBooksArray);
-    loadBooks(bookService.getDefaultFilter());
+    try {
+      await bookService.remove(bookId);
+      const newBooksArray = books.filter(book => book.id !== bookId)
+      setBooks(newBooksArray);
+      loadBooks(bookService.getDefaultFilter());
+      showSuccessMsg(`book (id = ${bookId}) removed successfully!`)
+    }catch(err){
+      showErrorMsg("Error deleting book.")
+    }
   }
 
   function onHandleNewBook() {
