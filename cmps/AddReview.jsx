@@ -1,16 +1,12 @@
 import { bookService } from "../services/book.service.js";
+import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js";
+
 
 const { useState, useEffect } = React;
 const { useNavigate, useParams } = ReactRouterDOM;
 
 export function AddReview() {
-  const [review, setReview] = useState({
-    fullName: "",
-    rating: 5,
-    readAt: Date.now("he"),
-  }); // bookService.getDefaultReviewTemplate
-  console.log(review);
-
+  const [review, setReview] = useState(bookService.getDefaultReview()); 
   const [book, setBook] = useState(null);
   const navigate = useNavigate();
   const { bookId } = useParams();
@@ -28,13 +24,28 @@ export function AddReview() {
     }));
   }
 
-  function onAddReview() {
-    //check all fields are full
-    console.log("addingReview");
-    //push to specific book reviews array
-    //navigate to books OR book/:bookId ?
-    //review added successfully
+  async function onAddReview(ev) {
+    ev.preventDefault()
+    const {fullName,readAt} = review;
+    const today = new Date().toISOString().split('T')[0];
+    if(fullName !== '' && readAt <= today){
+      try{
+        console.log("🚀 ~ onAddReview ~ book.id:", bookId)
+        console.log("🚀 ~ onAddReview ~ review:", review)
+        await bookService.addReviewToBook(bookId,review)
+        showSuccessMsg("Review added successfully")
+        navigate(`/books/${bookId}`)
+      }catch(err){
+        console.log("🚀 ~ onAddReview ~ err:", err);
+        showErrorMsg("Error posting review, please try again")
+        navigate(`/books/${bookId}`)
+      }
+    }else{
+      console.log("Full name or Date are invalid");
+      showErrorMsg("Problem with FullName / Date ")
+    }
   }
+
 
   if (!book) return <div>Loading....</div>;
   return (

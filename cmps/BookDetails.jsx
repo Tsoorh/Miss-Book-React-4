@@ -1,5 +1,6 @@
 import { LongTxt } from "./LongTxt.jsx";
 import { bookService } from "../services/book.service.js";
+import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js";
 
 
 const {useState,useEffect} = React;
@@ -14,7 +15,10 @@ export function BookDetails() {
   const navigate =useNavigate();
     
   useEffect(()=>{
-    const getBook = async () => {
+    getBook(bookId);
+  },[bookId])
+
+  async function getBook(bookId) {
       try{
         const bookData = await bookService.get(bookId);
         setBook(bookData)        
@@ -22,11 +26,7 @@ export function BookDetails() {
         console.log("error getting book with bookService.get",err)
         navigate('/books')
       }
-    }
-    getBook();
-  },[bookId])
-
-  
+  }
 
   function pageCountHandle(pages) {
     if (pages > 500) return "Serious Reading";
@@ -54,6 +54,18 @@ export function BookDetails() {
   function onAddReview(){
     navigate(`/books/addreview/${bookId}`)
   }
+  async function onRemoveReview(ev){
+    ev.preventDefault();
+    const {dataset} = ev.target;
+    const {reviewid} = dataset;
+    try {
+      await bookService.removeReview(bookId,reviewid);
+      showSuccessMsg(`Review removed successfully! , ${reviewid}`)
+      getBook(bookId);
+    }catch(err){
+      showErrorMsg("Error trying to remove Review");
+    }
+  }
 
   if(book){
     var {
@@ -69,7 +81,8 @@ export function BookDetails() {
     language,
     listPrice,
     prevBookId,
-    nextBookId
+    nextBookId,
+    reviews
   } = book;}
   
   if (listPrice) { var { amount, currencyCode, isOnSale } = listPrice };
@@ -105,8 +118,21 @@ export function BookDetails() {
           </p>
           {(!isImgReady)&&<p>Loading book picture....</p>}
           <img onLoad={onHandleLoadingBookIMG} src={thumbnail} alt={thumbnail} />
+          <div className="reviews-container">
+          {(reviews.length!==0)&&
+          reviews.map(review=>{
+            return(
+              <div className="review-container" key={review.reviewId}>
+                <p>Name : {review.fullName}</p>
+                <p>Rating : {review.rating}</p>
+                <p>Reading time : {review.readAt}</p>
+                <button className="delete-review" data-reviewid={review.reviewId} onClick={onRemoveReview}>Delete</button>
+              </div>
+            )
+          })
+        }
+        </div>
           <p>{availability}</p>
-          
           {isOnSale && (
             <div>
             {(!isOnSaleReady)&&<p>Loading sale-icon...</p>}

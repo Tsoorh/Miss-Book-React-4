@@ -10,7 +10,10 @@ export const bookService = {
     save,
     getEmptyBook,
     getDefaultFilter,
-    get
+    get,
+    addReviewToBook,
+    removeReview,
+    getDefaultReview
 }
 
 // For Debug (easy access from console):
@@ -69,9 +72,19 @@ async function save(book) {
 function getEmptyBook(title = '', maxPrice = '') {
     return { title, maxPrice }
 }
+
 function getDefaultFilter() {
         const filterBy = {title:'',maxPrice:1000, isOnSale: "all",category:"all"}           
         return filterBy
+}
+
+function getDefaultReview(){
+    const reviewTemplate = {
+    fullName: "",
+    rating: 5,
+    readAt: new Date().toISOString().split("T")[0]
+  }
+  return reviewTemplate;
 }
 
 function _createBooks() {
@@ -91,6 +104,7 @@ function _createBooks() {
       categories: [ctgs[utilService.getRandomIntInclusive(0, ctgs.length-1)]],
       thumbnail: `http://www.coding-academy.org/books-photos/${i+1}.jpg`,
       language: "en",
+      reviews:[],
       listPrice: {
         amount: utilService.getRandomIntInclusive(80, 500),
         currencyCode: "EUR",
@@ -100,13 +114,43 @@ function _createBooks() {
     books.push(book)
   }
   utilService.saveToStorage(BOOK_KEY,books)
-  console.log('books', books)
  }
 
 function _createBook(title, price = 0) {
     const book = getEmptyBook(title, price)
     book.id = utilService.makeId()
     return book
+}
+
+async function addReviewToBook (bookId,review){
+    try{
+        const book = await storageService.get(BOOK_KEY, bookId);
+        const reviewId = utilService.makeId(7);
+        const fullReviewToPush = {reviewId,...review}
+        console.log("🚀 ~ addReviewToBook ~ fullReviewToPush:", fullReviewToPush)
+        book.reviews.push(fullReviewToPush);
+        console.log("🚀 ~ addReviewToBook ~ book:", book)
+        await save(book);
+    }catch(err){
+        console.log("🚀 ~ addReviewToBook ~ err:", err);
+        return err
+    }
+}
+
+async function removeReview(bookId,reviewId) {
+    try{
+        const book = await storageService.get(BOOK_KEY,bookId);
+        const {reviews} = book;
+        console.log("🚀 ~ removeReview ~ reviews:", reviews)
+        const filteredReviews = reviews.filter(review=> review.reviewId !== reviewId);
+        console.log("🚀 ~ removeReview ~ filteredReviews:", filteredReviews)
+        book.reviews = filteredReviews;
+        await save(book);
+    }catch(err){
+        console.log("🚀 ~ removeReview ~ err:", err)
+        return err;
+    }
+
 }
 
 function createBookMissingParts(book){
@@ -123,6 +167,7 @@ function createBookMissingParts(book){
         categories: [ctgs[utilService.getRandomIntInclusive(0, ctgs.length-1)]],
         thumbnail: `http://www.coding-academy.org/books-photos/${(Math.floor(Math.random()*21))}.jpg`,
         language: "en",
+        reviews:[],
         listPrice:{
             ...book.listPrice,
             currencyCode: "EUR",
