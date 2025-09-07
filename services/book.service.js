@@ -127,9 +127,7 @@ async function addReviewToBook (bookId,review){
         const book = await storageService.get(BOOK_KEY, bookId);
         const reviewId = utilService.makeId(7);
         const fullReviewToPush = {reviewId,...review}
-        console.log("🚀 ~ addReviewToBook ~ fullReviewToPush:", fullReviewToPush)
         book.reviews.push(fullReviewToPush);
-        console.log("🚀 ~ addReviewToBook ~ book:", book)
         await save(book);
     }catch(err){
         console.log("🚀 ~ addReviewToBook ~ err:", err);
@@ -141,9 +139,7 @@ async function removeReview(bookId,reviewId) {
     try{
         const book = await storageService.get(BOOK_KEY,bookId);
         const {reviews} = book;
-        console.log("🚀 ~ removeReview ~ reviews:", reviews)
         const filteredReviews = reviews.filter(review=> review.reviewId !== reviewId);
-        console.log("🚀 ~ removeReview ~ filteredReviews:", filteredReviews)
         book.reviews = filteredReviews;
         await save(book);
     }catch(err){
@@ -178,7 +174,6 @@ function createBookMissingParts(book){
     return newBook;
 }
 
-
  function _setNextPrevBookId(book) {
  return storageService.query(BOOK_KEY).then((books) => {
  const bookIdx = books.findIndex((currbook) => currbook.id === book.id)
@@ -189,3 +184,7 @@ function createBookMissingParts(book){
  return book
  })
  }
+
+
+
+ 

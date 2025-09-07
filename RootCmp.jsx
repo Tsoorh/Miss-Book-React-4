@@ -7,6 +7,7 @@ import { ErrorPage } from "./cmps/ErrorPage.jsx";
 import { BookEdit } from "./cmps/BookEdit.jsx";
 import { UserMsg } from "./cmps/UserMsg.jsx";
 import { AddReview } from "./cmps/AddReview.jsx";
+import { AddBook } from "./cmps/AddBook.jsx";
 
 const Router = ReactRouterDOM.HashRouter;
 const {Routes,Route,Navigate} = ReactRouterDOM;
@@ -28,6 +29,7 @@ export function RootCmp() {
                 <Route path="/books/addnewbook" element={<BookEdit/>}/>
                 <Route path="/books/addnewbook/:bookId" element={<BookEdit/>}/>
                 <Route path="/books/addreview/:bookId" element={<AddReview/>}/>
+                <Route path="/books/addbook" element={<AddBook/>}/>
                 <Route path="*" element={<ErrorPage/>} />
                 </Routes>
             </main>

@@ -30,8 +30,6 @@ export function AddReview() {
     const today = new Date().toISOString().split('T')[0];
     if(fullName !== '' && readAt <= today){
       try{
-        console.log("🚀 ~ onAddReview ~ book.id:", bookId)
-        console.log("🚀 ~ onAddReview ~ review:", review)
         await bookService.addReviewToBook(bookId,review)
         showSuccessMsg("Review added successfully")
         navigate(`/books/${bookId}`)
