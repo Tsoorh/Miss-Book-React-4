@@ -1,31 +1,66 @@
-import { utilService } from './util.service.js'
-import { storageService } from './async-storage.service.js'
+import { utilService } from "./util.service.js";
+// import demoApiData from '../data/demoApiData.json'
+import { storageService } from "./async-storage.service.js";
 
-const BOOK_KEY = 'bookDB'
+const BOOK_KEY = "bookDB";
 
 export const googleBookService = {
-    query
+  query,
+  addGoogleBook,
+};
+
+async function query(txt) {
+  try {
+    // const apiData =await fetch('https://www.googleapis.com/books/v1/volumes?printType=books&q=effective%20javascript');
+    const response = await fetch("/data/demoApiData.json");
+    const demoApiData = await response.json();
+    const books = demoApiData.items;
+    const regExp = new RegExp(txt, "i");
+    const FilteredBooks = books.filter((book) =>
+      regExp.test(book.volumeInfo.title)
+    );
+    const bookTitles = FilteredBooks.map((book) => ({
+      id: book.id,
+      title: book.volumeInfo.title,
+    }));
+    return bookTitles;
+  } catch (err) {
+    console.log("Error with query fetch Data", err);
+    return err;
+  }
 }
 
-function query(txt){
-    // fetch('https://www.googleapis.com/books/v1/volumes?printType=books&q=effective%20javascript')
+async function addGoogleBook(bookId) {
+  try {
+    const response = await fetch("/data/demoApiData.json");
+    const demoApiData = await response.json();
+    const books = demoApiData.items;
+    const chosenBook = books.find((book) => bookId === book.id);
+    const bookToSave = _convertGoogleBookFormat(chosenBook);
+    return storageService.post(BOOK_KEY, bookToSave);
+  } catch (err) {
+    console.log("🚀 ~ addGoogleBook ~ err:", err);
+    return err;
+  }
 }
 
- function convertGoogleBookFormat(book){
-    const newbook ={};
-    newbook.id= book.id;
-    newbook.title= book.title;
-    newbook.subtitle= utilService.makeLorem(4);
-    newbook.authors= book.authors;
-    newbook.publishedDate= book.publishedDate.split('-')[0];;
-    newbook.description= book.description;
-    newbook.pageCount= book.pageCount;
-    newbook.categories= book.categories;
-    newbook.thumbnail= book.imageLinks.thumbnail;
-    newbook.language= book.language;
-    newbook.reviews=[];
-    newbook.listPrice.amount= utilService.getRandomIntInclusive(80, 500);
-    newbook.listPrice.currencyCode= "EUR";
-    newbook.listPrice.isOnSale= Math.random() > 0.7;
-    return newbook;
- }
+function _convertGoogleBookFormat(book) {
+  const newbook = {};
+  newbook.id = book.id;
+  newbook.title = book.volumeInfo.title;
+  newbook.subtitle = utilService.makeLorem(4);
+  newbook.authors = book.volumeInfo.authors;
+  newbook.publishedDate = book.volumeInfo.publishedDate.split("-")[0];
+  newbook.description = book.volumeInfo.description;
+  newbook.pageCount = book.volumeInfo.pageCount;
+  newbook.categories = book.volumeInfo.categories;
+  newbook.thumbnail = book.volumeInfo.imageLinks.thumbnail;
+  newbook.language = book.volumeInfo.language;
+  newbook.reviews = [];
+  newbook.listPrice = {
+    amount: utilService.getRandomIntInclusive(80, 500),
+    currencyCode: "EUR",
+    isOnSale: Math.random() > 0.7
+  };
+  return newbook;
+}
