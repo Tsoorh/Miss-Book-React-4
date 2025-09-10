@@ -1,16 +1,18 @@
 import { googleBookService } from "../services/google-book.service.js";
 import {showErrorMsg,showSuccessMsg} from "../services/event-bus.service.js"
-
-const { useState } = React;
+import {utilService} from "../services/util.service.js"
+const { useState,useRef } = React;
 
 export function AddBook() {
   const [bookName, setBookName] = useState("");
   const [booksList, setBooksList] = useState([]);
+  const setBookNameDebouce = useRef(utilService.debounce(setBookName,400)).current;
+
 
   function onHandleChange(ev) {
     ev.preventDefault();
     const { value } = ev.target;
-    setBookName(value);
+    setBookNameDebouce(value);
   }
 
   async function onAddBook(ev) {

@@ -1,11 +1,12 @@
 import { bookService } from "../services/book.service.js";
+import { Modal } from "./Modal.jsx";
 
-const { Fragment } = React;
+const { Fragment,useState } = React;
 const {useNavigate} = ReactRouterDOM;
 
 export function BookPreview({ book,onHandleDeleteBook }) {
   const navigate = useNavigate();
-
+  const [isModalOpen,setIsModalOpen] = useState(false);
 
   const { title, listPrice, language,thumbnail } = book;
   const { amount, currencyCode, isOnSale } = listPrice;
@@ -24,8 +25,11 @@ export function BookPreview({ book,onHandleDeleteBook }) {
   function onDeleteButton(ev) {
     const {id} = ev.target;
     onHandleDeleteBook(id)
+    setIsModalOpen(false);
   }
-
+  function onCloseModal(){
+    setIsModalOpen(false);
+  }
   const availability = isOnSale ? "In stock" : "Sold out";
   return (
     <Fragment>
@@ -41,11 +45,20 @@ export function BookPreview({ book,onHandleDeleteBook }) {
         <div>
         <button onClick={onOpenDetails} id={book.id}>Details</button>
         <button onClick={onEditButton} id={book.id}>Edit</button>
-        <button onClick={onDeleteButton} id={book.id}>Delete</button>
+        <button onClick={()=>{setIsModalOpen(true)}} id={book.id}>Delete</button>
         </div>
       </div>
-      <div className="book-details">
-      </div>
+        {isModalOpen&&
+        <Modal onCloseModal={onCloseModal}>
+          <h1>Are you sure?</h1>
+          <div>
+          <button onClick={()=>{onDeleteButton}} id={book.id}>Yes</button>
+          <button onClick={()=>{onCloseModal}} >No</button>
+          </div>
+        </Modal>
+        }
+      {/* <div className="book-details">
+      </div> */}
     </Fragment>
   );
 }
