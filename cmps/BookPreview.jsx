@@ -50,10 +50,10 @@ export function BookPreview({ book,onHandleDeleteBook }) {
       </div>
         {isModalOpen&&
         <Modal onCloseModal={onCloseModal}>
-          <h1>Are you sure?</h1>
+          <h2>Are you sure?</h2>
           <div>
-          <button onClick={()=>{onDeleteButton}} id={book.id}>Yes</button>
-          <button onClick={()=>{onCloseModal}} >No</button>
+          <button onClick={onDeleteButton} id={book.id}>Yes</button>
+          <button onClick={onCloseModal} >No</button>
           </div>
         </Modal>
         }

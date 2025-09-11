@@ -79,6 +79,7 @@ function debounce(func, time=500) {
     return (...args)=> {
         clearTimeout(timeoutId)
         timeoutId = setTimeout(()=>{
+            console.log(...args);
             func(...args)
         },time)
     }

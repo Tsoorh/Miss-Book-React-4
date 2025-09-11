@@ -1,29 +1,36 @@
 import { googleBookService } from "../services/google-book.service.js";
-import {showErrorMsg,showSuccessMsg} from "../services/event-bus.service.js"
-import {utilService} from "../services/util.service.js"
-const { useState,useRef } = React;
+import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js";
+import { utilService } from "../services/util.service.js";
+const { useState, useRef, useEffect } = React;
 
 export function AddBook() {
   const [bookName, setBookName] = useState("");
   const [booksList, setBooksList] = useState([]);
-  const setBookNameDebouce = useRef(utilService.debounce(setBookName,400)).current;
+  const getBooksDebounce = useRef(utilService.debounce(getBooks, 500)).current;
 
+  useEffect(() => {
+    if (bookName) {
+      getBooksDebounce(bookName);
+    } else {
+      setBooksList([]);
+    }
+  }, [bookName]);
 
   function onHandleChange(ev) {
     ev.preventDefault();
     const { value } = ev.target;
-    setBookNameDebouce(value);
+    setBookName(value)
   }
 
   async function onAddBook(ev) {
     ev.preventDefault();
     const { id } = ev.target;
     try {
-        await googleBookService.addGoogleBook(id);
-        showSuccessMsg("Book added from google");
-    }catch(err){
-        console.log("🚀 ~ onAddBook ~ err:", err)
-        showErrorMsg("Error adding book from google")
+      await googleBookService.addGoogleBook(id);
+      showSuccessMsg("Book added from google");
+    } catch (err) {
+      console.log("🚀 ~ onAddBook ~ err:", err);
+      showErrorMsg("Error adding book from google");
     }
   }
 
@@ -32,10 +39,14 @@ export function AddBook() {
     setBookName("");
   }
 
-  async function onSearchInput(ev) {
-    ev.preventDefault();
+  // async function onSearchInput(ev) {
+  //   ev.preventDefault();
+  //   getBooks();
+  // }
+
+  async function getBooks(searchText) {
     try {
-      const booksFromGoogle = await googleBookService.query(bookName);
+      const booksFromGoogle = await googleBookService.query(searchText);
       setBooksList(booksFromGoogle);
     } catch (err) {
       console.log("Error searching for books in google: ", err);
@@ -56,7 +67,7 @@ export function AddBook() {
           onChange={onHandleChange}
         />
         <button onClick={onCleanInput}>x</button>
-        <button onClick={onSearchInput}>Search</button>
+        {/* <button onClick={onSearchInput}>Search</button> */}
         {booksList.length > 0 && (
           <ul>
             {booksList.map((book) => {
@@ -73,7 +84,7 @@ export function AddBook() {
             })}
           </ul>
         )}
-        {(booksList.length===0)&& <div>No books were found</div> }
+        {booksList.length === 0 && <div>No books were found</div>}
       </form>
     </div>
   );
