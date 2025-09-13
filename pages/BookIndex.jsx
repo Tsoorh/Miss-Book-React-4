@@ -10,28 +10,29 @@ export function BookIndex() {
   const [books, setBooks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filterBy, setFilterBy] = useState(bookService.getDefaultFilter());
-  const [rangeAndCategories, setRangeAndCategories] = useState(
-    getPriceRangeAndCategories()
-  );//לנסות לשנות לuseref
+  const [rangeAndCategories, setRangeAndCategories] = useState(getPriceRangeAndCategories());
   const navigate = useNavigate();
 
   useEffect(() => {
-    loadBooks({});
+      loadBooks({});
   }, []);
+
+
 
   
   async function loadBooks(filterParams) {
     try {
-      const books = await bookService.query(filterParams);
-      setBooks(books);
-      if(!rangeAndCategories || rangeAndCategories.categories.length===1){
-      setRangeAndCategories(getPriceRangeAndCategories());
+      const booksFromServer = await bookService.query(filterParams);
+      setBooks(booksFromServer);
+      if(rangeAndCategories.max===100 || rangeAndCategories.categories.length===1){
+        setRangeAndCategories(getPriceRangeAndCategories(booksFromServer)); 
       }
     } catch (err) {
       console.log("Error query books :", err);
     }
   }
-
+  
+  
   function onSetFilterBy(filterParams) {    
     setFilterBy(filterParams);
     loadBooks(filterParams);
@@ -69,15 +70,15 @@ export function BookIndex() {
     setIsModalOpen(true)
   }
 
-  function getPriceRangeAndCategories() {
+  function getPriceRangeAndCategories(booksFromServer=[]) {
     let categories = ["All"];
-    if (!books.length) return { min: 0, max: 1000, categories };
+    if (booksFromServer.length === 0 ) return { min: 0, max: 1000, categories };
     const data = {
-      min: books[0].listPrice.amount,
-      max: books[0].listPrice.amount,
+      min: booksFromServer[0].listPrice.amount,
+      max: booksFromServer[0].listPrice.amount,
       categories
-    };
-    books.forEach((book) => {
+    };    
+    booksFromServer.forEach((book) => {      
       if (book.listPrice.amount > data.max) data.max = book.listPrice.amount;
       if (book.listPrice.amount < data.min) data.min = book.listPrice.amount;
       book.categories.forEach((category) => {
@@ -86,8 +87,11 @@ export function BookIndex() {
         }
       });
     });
+    setFilterBy(prev=>({...prev,maxPrice:data.max}))    
     return data;
   }
+
+  
 
   return (
     <section>

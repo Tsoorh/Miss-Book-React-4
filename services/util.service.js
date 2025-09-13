@@ -7,7 +7,8 @@ export const utilService = {
     getDayName,
     getMonthName,
     animateCSS,
-    debounce
+    debounce,
+    getTruthyValues
 }
 
 function makeId(length = 6) {
@@ -83,4 +84,13 @@ function debounce(func, time=500) {
             func(...args)
         },time)
     }
+}
+
+function getTruthyValues(obj){
+    const newObj = {};
+    for(const key in obj){
+        const value = obj[key];
+        if(value) {newObj[key]=value}
+    }
+    return newObj;
 }

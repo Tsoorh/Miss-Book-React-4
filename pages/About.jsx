@@ -1,4 +1,11 @@
+import { utilService } from "../services/util.service.js";
+const {NavLink,Outlet} = ReactRouterDOM;
+
 export function About() {
+
+  function useAnimation(event){
+    utilService.animateCSS(event.target,"headShake");
+  }
   return (
     <section>
       <h2>About us</h2>
@@ -19,6 +26,11 @@ export function About() {
         ullamcorper placerat eu vitae massa. Vestibulum tincidunt ipsum vel
         pretium tincidunt. Ut tempus.
       </p>
+      <nav>
+      <NavLink to="/about/about-team"><button onClick={useAnimation}>About team</button></NavLink>
+      <NavLink to="/about/about-goal"><button onClick={useAnimation}>About goal</button></NavLink>
+      </nav>
+      <Outlet/>
     </section>
   );
 }
