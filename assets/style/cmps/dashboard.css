@@ -1,0 +1,12 @@
+.dashboard-container{
+    display: flex;
+    align-items: end;
+    background-color: #a7a7a72a;
+    justify-content: space-around;
+    text-align: center;
+    height: 70vh;
+}
+.chart{
+    background-color: rgb(176, 231, 255);
+    min-width: 10em;
+}

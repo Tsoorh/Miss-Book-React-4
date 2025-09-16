@@ -17,8 +17,6 @@ export function BookIndex() {
       loadBooks({});
   }, []);
 
-
-
   
   async function loadBooks(filterParams) {
     try {
@@ -31,6 +29,8 @@ export function BookIndex() {
       console.log("Error query books :", err);
     }
   }
+
+
   
   
   function onSetFilterBy(filterParams) {    
@@ -114,6 +114,7 @@ export function BookIndex() {
         <button onClick={onHandleNewBook} name="scratch">New book from scratch</button>
         <button onClick={onHandleNewBook} name="google">New book from Google</button>
       </Modal>}
+      
     </section>
   );
 }
