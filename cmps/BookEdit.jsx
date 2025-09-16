@@ -87,9 +87,9 @@ export function BookEdit() {
 
         <div className="new-book-buttons">
           <button onClick={onSaveBook}>Save</button>
-          <button>
-            <Link to="/books">Back</Link>
-          </button>
+          
+            <Link to="/books"><button>Back</button></Link>
+          
         </div>
       </form>
     </div>
