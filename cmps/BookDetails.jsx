@@ -119,7 +119,7 @@ export function BookDetails() {
           {(!isImgReady)&&<p>Loading book picture....</p>}
           <img onLoad={onHandleLoadingBookIMG} src={thumbnail} alt={thumbnail} />
           <div className="reviews-container">
-          {(reviews.length!==0)&&
+          {reviews&&(reviews.length!==0)&&
           reviews.map(review=>{
             return(
               <div className="review-container" key={review.reviewId}>
