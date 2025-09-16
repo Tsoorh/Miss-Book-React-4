@@ -44,7 +44,7 @@ function query(filterBy = {}) {
                     break;
                 }
             }
-            if(filterBy.category!=="all"){ 
+            if((filterBy.category).toLowerCase()!=="all"){ 
                 const regExp = new RegExp(filterBy.category, 'i')
                 books = books.filter(book => regExp.test(book.categories))
             }
