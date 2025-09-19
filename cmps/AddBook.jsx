@@ -6,7 +6,7 @@ const { useState, useRef, useEffect } = React;
 export function AddBook() {
   const [bookName, setBookName] = useState("");
   const [booksList, setBooksList] = useState([]);
-  const getBooksDebounce = useRef(utilService.debounce(getBooks, 500)).current;
+  const getBooksDebounce = useRef(utilService.debounce(getBooks, 300)).current;
 
   useEffect(() => {
     if (bookName) {
@@ -39,10 +39,6 @@ export function AddBook() {
     setBookName("");
   }
 
-  // async function onSearchInput(ev) {
-  //   ev.preventDefault();
-  //   getBooks();
-  // }
 
   async function getBooks(searchText) {
     try {
@@ -55,8 +51,9 @@ export function AddBook() {
 
   return (
     <div>
-      <h1>Add book from Google!</h1>
-      <form>
+      <h1 className="center">Add book from Google!</h1>
+      <form className="form-style">
+        <div>
         <label htmlFor="book-add"></label>
         <input
           type="text"
@@ -65,13 +62,14 @@ export function AddBook() {
           className="input-style"
           value={bookName}
           onChange={onHandleChange}
-        />
-        <button onClick={onCleanInput}>x</button>
-        {/* <button onClick={onSearchInput}>Search</button> */}
+          autoFocus
+          />
+        <button onClick={onCleanInput} title="Remove search">x</button>
+          </div>
+        <div className="google-results">
         {booksList.length > 0 && (
           <ul>
-            {booksList.map((book) => {
-              return (
+            {booksList.map((book) => {return (
                 <li key={book.id}>
                   {book.title}
                   <span>
@@ -85,6 +83,8 @@ export function AddBook() {
           </ul>
         )}
         {booksList.length === 0 && <div>No books were found</div>}
+
+        </div>
       </form>
     </div>
   );

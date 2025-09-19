@@ -3,6 +3,7 @@ import { utilService } from "./util.service.js";
 import { storageService } from "./async-storage.service.js";
 
 const BOOK_KEY = "bookDB";
+const gCACHE = "gCACHE";
 
 export const googleBookService = {
   query,
@@ -11,18 +12,15 @@ export const googleBookService = {
 
 async function query(txt) {
   try {
-    const response =await fetch('https://www.googleapis.com/books/v1/volumes?printType=books&q=effective%20javascript');
-    // const response = await fetch("/data/demoApiData.json");
-    const demoApiData = await response.json();
-    const books = demoApiData.items;
-    const regExp = new RegExp(txt, "i");
-    const FilteredBooks = books.filter((book) =>
-      regExp.test(book.volumeInfo.title)
-    );
-    const bookTitles = FilteredBooks.map((book) => ({
+    const response =await fetch(`https://www.googleapis.com/books/v1/volumes?printType=books&q=${encodeURIComponent(txt)}`);
+    const apiData = await response.json();
+    const books = apiData.items;
+    localStorage.setItem(gCACHE,JSON.stringify({searchTxt:txt,results:books}));
+    const bookTitles = books.map((book) => {
+    return ({
       id: book.id,
-      title: book.volumeInfo.title,
-    }));
+      title: book.volumeInfo.title
+    })});
     return bookTitles;
   } catch (err) {
     console.log("Error with query fetch Data", err);
@@ -32,10 +30,8 @@ async function query(txt) {
 
 async function addGoogleBook(bookId) {
   try {
-    const response = await fetch("/data/demoApiData.json");
-    const demoApiData = await response.json();
-    const books = demoApiData.items;
-    const chosenBook = books.find((book) => bookId === book.id);
+    const lastSearch = JSON.parse(localStorage.getItem(gCACHE));
+    const chosenBook = lastSearch.results.find((book) => bookId === book.id);
     const bookToSave = _convertGoogleBookFormat(chosenBook);
     return storageService.post(BOOK_KEY, bookToSave);
   } catch (err) {
@@ -64,3 +60,4 @@ function _convertGoogleBookFormat(book) {
   };
   return newbook;
 }
+

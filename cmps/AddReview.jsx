@@ -1,18 +1,18 @@
 import { bookService } from "../services/book.service.js";
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js";
 
-
 const { useState, useEffect } = React;
 const { useNavigate, useParams } = ReactRouterDOM;
 
 export function AddReview() {
-  const [review, setReview] = useState(bookService.getDefaultReview()); 
+  const [review, setReview] = useState(bookService.getDefaultReview());
   const [book, setBook] = useState(null);
   const navigate = useNavigate();
   const { bookId } = useParams();
 
+
   useEffect(() => {
-    if (bookId) setBook(bookService.get(bookId));
+    if (bookId) bookService.get(bookId).then(setBook);
   }, [bookId]);
 
   function onHandleChange(ev) {
@@ -25,25 +25,24 @@ export function AddReview() {
   }
 
   async function onAddReview(ev) {
-    ev.preventDefault()
-    const {fullName,readAt} = review;
-    const today = new Date().toISOString().split('T')[0];
-    if(fullName !== '' && readAt <= today){
-      try{
-        await bookService.addReviewToBook(bookId,review)
-        showSuccessMsg("Review added successfully")
-        navigate(`/books/${bookId}`)
-      }catch(err){
+    ev.preventDefault();
+    const { fullName, readAt } = review;
+    const today = new Date().toISOString().split("T")[0];
+    if (fullName !== "" && readAt <= today) {
+      try {
+        await bookService.addReviewToBook(bookId, review);
+        showSuccessMsg("Review added successfully");
+        navigate(`/books/${bookId}`);
+      } catch (err) {
         console.log("🚀 ~ onAddReview ~ err:", err);
-        showErrorMsg("Error posting review, please try again")
-        navigate(`/books/${bookId}`)
+        showErrorMsg("Error posting review, please try again");
+        navigate(`/books/${bookId}`);
       }
-    }else{
+    } else {
       console.log("Full name or Date are invalid");
-      showErrorMsg("Problem with FullName / Date ")
+      showErrorMsg("Problem with FullName / Date ");
     }
   }
-
 
   if (!book) return <div>Loading....</div>;
   return (
@@ -67,15 +66,14 @@ export function AddReview() {
             name="rating"
             id="rating"
             className="input-style"
-
             onChange={onHandleChange}
             value={review.rating}
           >
-            <option value="1">1 stars</option>
-            <option value="2">2 stars</option>
-            <option value="3">3 stars</option>
-            <option value="4">4 stars</option>
-            <option value="5">5 stars</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
           </select>
         </div>
         <div className="item">

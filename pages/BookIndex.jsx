@@ -43,12 +43,12 @@ export function BookIndex() {
       await bookService.remove(bookId);
       const newBooksArray = books.filter(book => book.id !== bookId)
       setBooks(newBooksArray);
-      loadBooks(bookService.getDefaultFilter());
-      showSuccessMsg(`book (id = ${bookId}) removed successfully!`)
+      showSuccessMsg(`book (id = ${bookId}) removed successfully!`);
     }catch(err){
       showErrorMsg("Error deleting book.")
     }
   }
+
 
   function onHandleNewBook(ev) {
     const {name} = ev.target
@@ -63,12 +63,17 @@ export function BookIndex() {
     onCloseModal();
   }
 
+  
+
   function onCloseModal(){
     setIsModalOpen(false)
   }
+
+
   function onOpenModal(){
     setIsModalOpen(true)
   }
+
 
   function getPriceRangeAndCategories(booksFromServer=[]) {
     let categories = ["All"];

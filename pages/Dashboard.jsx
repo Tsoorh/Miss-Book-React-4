@@ -51,9 +51,13 @@ export function Dashboard() {
   return (
     <section className="dashboard-container">
       {Object.keys(stats).map((key) => {
+        const decimalNumber = Number.isInteger(stats[key]) ?  stats[key] +'%' : stats[key].toFixed(2) + '%' ;
+        console.log(Number.isInteger(stats[key]), stats[key]);
+        
+        const heightStyle = { height: Number((stats[key] / 100 * 70)) + 'vh' };
         return (
           <div className="chart-container" key={key}>
-            <div className="chart" style={{height:Number((stats[key]/100*70))+'vh'}}><span className="label-present">{stats[key]+'%'}</span></div>
+            <div className="chart" style={heightStyle}><span className="label-present">{decimalNumber}</span></div>
             <p className="label-present">{key}</p>
           </div>
         );
